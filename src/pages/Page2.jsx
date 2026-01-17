@@ -38,28 +38,28 @@ function Page2() {
   const navigate = useNavigate();
 
   const [seatWeights, setSeatWeights] = useState({
-    seat_legroom: 0.3,
-    seat_recline: 0.2,
-    seat_width: 0.2,
-    aisle_space: 0.2,
-    viewing_tv: 0.1
+    seat_legroom: 1,
+    seat_recline: 1,
+    seat_width: 1,
+    aisle_space: 1,
+    viewing_tv: 1
   });
 
   const [loungeWeights, setLoungeWeights] = useState({
-    comfort: 0.2,
-    cleanliness: 0.2,
-    bar_beverages: 0.1,
-    catering: 0.2,
-    washrooms: 0.1,
-    wifi_connectivity: 0.1,
-    staff_service: 0.1
+    comfort: 1,
+    cleanliness: 1,
+    bar_beverages: 1,
+    catering: 1,
+    washrooms: 1,
+    wifi_connectivity: 1,
+    staff_service: 1
   });
 
   const [airlineWeights, setAirlineWeights] = useState({
-    seat_comfort: 0.3,
-    cabin_staff: 0.3,
-    food_beverages: 0.2,
-    value_money: 0.2
+    seat_comfort: 1,
+    cabin_staff: 1,
+    food_beverages: 1,
+    value_money: 1
   });
 
   const [seatResult, setSeatResult] = useState(null);
@@ -90,19 +90,31 @@ function Page2() {
 
       <Grid container spacing={3}>
         {Object.keys(values).map((key) => (
-          <Grid item xs={12} sm={6} key={key}>
+          <Grid item xs={12} sm={8} key={key}>
             <TextField
               fullWidth
               type="number"
-              step="0.1"
+              inputProps={{ min: 1, max: 5, step: 1 }}
+              /*step="0.1"*/
               label={labels[key]}
               value={values[key]}
-              onChange={(e) =>
-                setValues({ ...values, [key]: Number(e.target.value) })
-              }
-              InputLabelProps={{ style: { color: "#aaa" } }}
+              onChange={(e) => {
+                let val = Number(e.target.value);
+                if (val < 1) val = 1;
+                if (val > 5) val = 5;
+                setValues({ ...values, [key]: val });
+              }}
+              InputLabelProps={{
+                style: {
+                  color: "#aaa",
+                  whiteSpace: "normal",  
+                  wordBreak: "break-word", 
+                },
+                shrink: true
+              }}
               InputProps={{ style: { color: "#fff" } }}
               sx={{
+                mt: 2,
                 "& .MuiOutlinedInput-root": {
                   backgroundColor: "#181818",
                   "& fieldset": { borderColor: "#444" },
@@ -110,7 +122,8 @@ function Page2() {
                   "&.Mui-focused fieldset": {
                     borderColor: "#9c27b0",
                     borderWidth: 2
-                  }
+                  },
+                  paddingTop: "24px", 
                 }
               }}
             />
@@ -134,9 +147,9 @@ function Page2() {
         <Typography variant="h6" sx={{ color: "#fff" }}>
           {result.airline_name}
         </Typography>
-        <Typography sx={{ color: "#b0b0b0" }}>
+        {/*<Typography sx={{ color: "#b0b0b0" }}>
           Ukupna ocena: {Number(result.total_score).toFixed(2)}
-        </Typography>
+        </Typography>*/}
       </Paper>
     );
 
@@ -209,12 +222,12 @@ function Page2() {
             )
           }
         >
-          Izračunaj sedišta
+          Predloži aviokopaniju
         </Button>
         {renderResult(seatResult)}
 
         {renderSection(
-          "Saloni (Lounge)",
+          "Saloni (Lounge) – važnost aspekata",
           loungeLabels,
           loungeWeights,
           setLoungeWeights
@@ -230,7 +243,7 @@ function Page2() {
             )
           }
         >
-          Izračunaj lounge
+          Predloži aviokopaniju
         </Button>
         {renderResult(loungeResult)}
 
@@ -251,7 +264,7 @@ function Page2() {
             )
           }
         >
-          Izračunaj aviokompaniju
+          Predloži aviokopaniju
         </Button>
         {renderResult(airlineResult)}
 

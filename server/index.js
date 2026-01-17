@@ -12,7 +12,7 @@ app.use(express.json());
 const pool = new Pool({
   user: "postgres",          
   host: "localhost",
-  database: "avio_reviews",
+  database: "airline_recommendations_db",
   password: "postgres",      
   port: 5432,
 });
