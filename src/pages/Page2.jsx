@@ -1,7 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Page2.css";
-
+import {
+  Box,
+  Paper,
+  Typography,
+  Grid,
+  TextField,
+  Button
+} from "@mui/material";
 
 const seatLabels = {
   seat_legroom: "Prostor za noge",
@@ -60,143 +66,216 @@ function Page2() {
   const [loungeResult, setLoungeResult] = useState(null);
   const [airlineResult, setAirlineResult] = useState(null);
 
-  const handleSeatChange = (e) =>
-    setSeatWeights({ ...seatWeights, [e.target.name]: Number(e.target.value) });
-
-  const handleLoungeChange = (e) =>
-    setLoungeWeights({ ...loungeWeights, [e.target.name]: Number(e.target.value) });
-
-  const handleAirlineChange = (e) =>
-    setAirlineWeights({ ...airlineWeights, [e.target.name]: Number(e.target.value) });
-
- 
-  const handleSeatSubmit = async () => {
-    const res = await fetch("http://localhost:5000/best-airline-seat-by-preference", {
+  const handleSubmit = async (url, data, setter) => {
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(seatWeights)
+      body: JSON.stringify(data)
     });
-    setSeatResult(await res.json());
+    setter(await res.json());
   };
 
-  const handleLoungeSubmit = async () => {
-    const res = await fetch("http://localhost:5000/best-airline-lounge-by-preference", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(loungeWeights)
-    });
-    setLoungeResult(await res.json());
-  };
+  const renderSection = (title, labels, values, setValues) => (
+    <Paper
+      sx={{
+        p: 4,
+        mb: 4,
+        borderRadius: 3,
+        backgroundColor: "#121212"
+      }}
+    >
+      <Typography variant="h6" sx={{ color: "#fff", mb: 3 }}>
+        {title}
+      </Typography>
 
-  const handleAirlineSubmit = async () => {
-    const res = await fetch("http://localhost:5000/best-airline-main-by-preference", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(airlineWeights)
-    });
-    setAirlineResult(await res.json());
-  };
-
- 
-  return (
-    <div className="page2-container">
-      <h2>Unos težina prema ličnim preferencama</h2>
-
-      {/* deo za unos težina aspekata vezanih za sedište */}
-      <h3>Sedišta – važnost aspekata</h3>
-      <div className="weights-form">
-        {Object.keys(seatWeights).map((key) => (
-          <div className="weight-row" key={key}>
-            <label>{seatLabels[key]}</label>
-            <input
+      <Grid container spacing={3}>
+        {Object.keys(values).map((key) => (
+          <Grid item xs={12} sm={6} key={key}>
+            <TextField
+              fullWidth
               type="number"
               step="0.1"
-              name={key}
-              value={seatWeights[key]}
-              onChange={handleSeatChange}
+              label={labels[key]}
+              value={values[key]}
+              onChange={(e) =>
+                setValues({ ...values, [key]: Number(e.target.value) })
+              }
+              InputLabelProps={{ style: { color: "#aaa" } }}
+              InputProps={{ style: { color: "#fff" } }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "#181818",
+                  "& fieldset": { borderColor: "#444" },
+                  "&:hover fieldset": { borderColor: "#6a1b9a" },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#9c27b0",
+                    borderWidth: 2
+                  }
+                }
+              }}
             />
-          </div>
+          </Grid>
         ))}
-      </div>
-      <button className="calculate-btn" onClick={handleSeatSubmit}>
-        Izračunaj
-      </button>
+      </Grid>
+    </Paper>
+  );
 
-      {seatResult && (
-        <div className="result-box">
-          <h3>Sedišta – najbolja aviokompanija</h3>
-          <p><b>{seatResult.airline_name}</b></p>
-          <p>Ukupna ocena: {Number(seatResult.total_score).toFixed(2)}</p>
-        </div>
-      )}
-
-      {/* deo za unos težina aspekata vezanih za lounge */}
-      <h3>Saloni (Lounge) – važnost aspekata</h3>
-      <div className="weights-form">
-        {Object.keys(loungeWeights).map((key) => (
-          <div className="weight-row" key={key}>
-            <label>{loungeLabels[key]}</label>
-            <input
-              type="number"
-              step="0.1"
-              name={key}
-              value={loungeWeights[key]}
-              onChange={handleLoungeChange}
-            />
-          </div>
-        ))}
-      </div>
-      <button className="calculate-btn" onClick={handleLoungeSubmit}>
-        Izračunaj
-      </button>
-
-      {loungeResult && (
-        <div className="result-box">
-          <h3>Saloni (Lounge) – najbolja aviokompanija</h3>
-          <p><b>{loungeResult.airline_name}</b></p>
-          <p>Ukupna ocena: {Number(loungeResult.total_score).toFixed(2)}</p>
-        </div>
-      )}
-
-      {/* deo za unos težina aspekata vezanih za generalno iskustvo*/}
-      <h3> Važnost glavnih aspekata aviokompanija</h3>
-      <div className="weights-form">
-        {Object.keys(airlineWeights).map((key) => (
-          <div className="weight-row" key={key}>
-            <label>{airlineLabels[key]}</label>
-            <input
-              type="number"
-              step="0.1"
-              name={key}
-              value={airlineWeights[key]}
-              onChange={handleAirlineChange}
-            />
-          </div>
-        ))}
-      </div>
-
-      <button className="calculate-btn" onClick={handleAirlineSubmit}>
-        Izračunaj
-      </button>
-
-      {/*prikaz rezultata*/}
-      {airlineResult && (
-        <div className="result-box">
-          <h3>Najbolja aviokompanija po glavnim aspektima</h3>
-          <p><b>{airlineResult.airline_name}</b></p>
-          <p>Ukupna ocena: {Number(airlineResult.total_score).toFixed(2)}</p>
-        </div>
-      )}
-
-      {/* dugme za vraćanje na početnu stranu */}
-      <button
-        className="calculate-btn"
-        style={{ marginTop: "1rem", backgroundColor: "#ccc", color: "#000" }}
-        onClick={() => navigate("/")}
+  const renderResult = (result) =>
+    result && (
+      <Paper
+        sx={{
+          p: 3,
+          mt: 2,
+          borderRadius: 2,
+          backgroundColor: "#1e1e1e",
+          textAlign: "center"
+        }}
       >
-        Povratak na početnu
-      </button>
-    </div>
+        <Typography variant="h6" sx={{ color: "#fff" }}>
+          {result.airline_name}
+        </Typography>
+        <Typography sx={{ color: "#b0b0b0" }}>
+          Ukupna ocena: {Number(result.total_score).toFixed(2)}
+        </Typography>
+      </Paper>
+    );
+
+  const outlinedButtonStyle = {
+    py: 1.4,
+    fontWeight: 600,
+    letterSpacing: "0.4px",
+    borderRadius: 2,
+    color: "#e1bee7",
+    border: "2px solid #6a1b9a",
+    backgroundColor: "transparent",
+    transition: "all 0.3s ease",
+    "&:hover": {
+      backgroundColor: "rgba(106,27,154,0.15)",
+      boxShadow: "0 0 12px rgba(156,39,176,0.6)",
+      borderColor: "#9c27b0",
+      transform: "translateY(-1px)"
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(135deg, rgb(210,197,197) 0%, rgb(89,6,104) 100%)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        p: 4,
+        insert: 0
+      }}
+    >
+      <Paper
+        sx={{
+          width: "100%",
+          maxWidth: 900,
+          p: 5,
+          borderRadius: 4,
+          backgroundColor: "#0f0f0f",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.5)"
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{
+            color: "#fff",
+            fontWeight: 700,
+            mb: 5,
+            textAlign: "center"
+          }}
+        >
+          ✈️ Personalizovane AI preporuke
+        </Typography>
+
+        {renderSection(
+          "Sedišta – važnost aspekata",
+          seatLabels,
+          seatWeights,
+          setSeatWeights
+        )}
+        <Button
+          fullWidth
+          sx={{ ...outlinedButtonStyle, mb: 4 }}
+          onClick={() =>
+            handleSubmit(
+              "http://localhost:5000/best-airline-seat-by-preference",
+              seatWeights,
+              setSeatResult
+            )
+          }
+        >
+          Izračunaj sedišta
+        </Button>
+        {renderResult(seatResult)}
+
+        {renderSection(
+          "Saloni (Lounge)",
+          loungeLabels,
+          loungeWeights,
+          setLoungeWeights
+        )}
+        <Button
+          fullWidth
+          sx={{ ...outlinedButtonStyle, mb: 4 }}
+          onClick={() =>
+            handleSubmit(
+              "http://localhost:5000/best-airline-lounge-by-preference",
+              loungeWeights,
+              setLoungeResult
+            )
+          }
+        >
+          Izračunaj lounge
+        </Button>
+        {renderResult(loungeResult)}
+
+        {renderSection(
+          "Glavni aspekti aviokompanija",
+          airlineLabels,
+          airlineWeights,
+          setAirlineWeights
+        )}
+        <Button
+          fullWidth
+          sx={outlinedButtonStyle}
+          onClick={() =>
+            handleSubmit(
+              "http://localhost:5000/best-airline-main-by-preference",
+              airlineWeights,
+              setAirlineResult
+            )
+          }
+        >
+          Izračunaj aviokompaniju
+        </Button>
+        {renderResult(airlineResult)}
+
+        <Button
+          fullWidth
+          sx={{
+            mt: 4,
+            py: 1.2,
+            borderRadius: 2,
+            color: "#bbb",
+            border: "1px solid #444",
+            backgroundColor: "transparent",
+            "&:hover": {
+              borderColor: "#6a1b9a",
+              color: "#fff",
+              backgroundColor: "rgba(106,27,154,0.08)"
+            }
+          }}
+          onClick={() => navigate("/")}
+        >
+          Povratak na početnu
+        </Button>
+      </Paper>
+    </Box>
   );
 }
 
