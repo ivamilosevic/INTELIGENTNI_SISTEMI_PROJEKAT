@@ -27,7 +27,7 @@
 - Python 3.10+
 - Flask 3.1.2 (including flask-cors==6.0.2)
 - PostgreSQL 16+
-- Other Python libraries for ML: psycopg2-binary, PyTorch, TensorFlow/Keras, transformers
+- Other Python libraries for ML: psycopg2-binary, PyTorch, TensorFlow/Keras, transformers, scikit-learn, pandas, nltk
 
 ### Navigating
 1. Clone the repository to a local folder
