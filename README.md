@@ -22,38 +22,38 @@
 
 ## 🤖 How to Run
 
-1. Clone the repository
+### Prerequisites
+- Node.js 24.0+
+- Python 3.10+
+- Flask 3.1.2 (including flask-cors==6.0.2)
+- PostgreSQL 16+
+- Other Python libraries for ML: psycopg2-binary, PyTorch, TensorFlow/Keras, transformers
+
+### Navigating
+1. Clone the repository to a local folder
 ```bash
 git clone https://github.com/ivamilosevic/INTELIGENTNI_SISTEMI_PROJEKAT.git
 ```
 
 2. Set up and populate the database
    
-   2.1 Navigate to the `FUNKCIONALNOSTI I SKUPOVI PODATAKA/BAZA` folder
+   2.1 Create a local PostgreSQL database `airline_recommendations_db`
+   
+   2.2 Navigate to the `FUNKCIONALNOSTI I SKUPOVI PODATAKA/BAZA` folder
    
    ```bash
     cd "FUNKCIONALNOSTI I SKUPOVI PODATAKA/BAZA"
    ```
-   
-   2.2 Create the database
-   
-    ```bash
-    createdb airline_recommendations_db
-    ```
-    
-   2.3 Follow the instructions in the txt file to create the necessary tables
-   
-    ```bash
-    psql -U username -d airline_recommendations_db -f "FUNKCIONALNOSTI I SKUPOVI PODATAKA/Baza/create table.txt"
-    ```
-    
-    2.4 Populate the database
-   
-   - Run the Jupyter notebooks in `FUNKCIONALNOSTI I SKUPOVI PODATAKA` to populate the database and initialize the core AI functionalities.
-   - The notebooks perform preprocessing and data insertion.
-   - This step allows exploration and extension of the system’s AI features.
 
-3. Start the frontend
+   2.3 Follow the instructions in `create_table.txt` to create the required tables.
+   
+   2.4 Populate the database
+   - Run the Jupyter notebooks in the "FUNKCIONALNOSTI I SKUPOVI PODATAKA" folder to populate the database and initialize the core AI functionalities.
+   - These notebooks perform preprocessing and data insertion.
+   - This step enables exploration and extension of the system’s AI features.
+
+
+4. Start the frontend
 ```bash
 npm run dev
 ```
@@ -64,4 +64,4 @@ cd "flask servis"
 python flask_service.py
 ```
 
-The frontend and backend are now running correctly. The project should be accessible through a web browser.
+The frontend and backend are now running. The project should be accessible through a web browser.
