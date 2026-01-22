@@ -5,13 +5,16 @@ import FlightIcon from '@mui/icons-material/Flight';
 import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineExtra';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import AddCommentIcon from '@mui/icons-material/AddComment'; 
 
 const choices = [
-  { title: "Najbolje aviokompanije i aspekti putnika", path: "/page1", icon: <FlightTakeoffIcon /> },
+  { title: "Najbolje aviokompanije i važnost njenih aspekata", path: "/page1", icon: <FlightTakeoffIcon /> },
   { title: "Izbor aviokompanije po preferencama", path: "/page2", icon: <FlightIcon /> },
   { title: "Ocene po kompaniji i tipu sedišta", path: "/page3", icon: <AirlineSeatReclineExtraIcon /> },
   { title: "Opis aerodroma", path: "/page4", icon: <AirportShuttleIcon /> },
   { title: "Upoređivanje dve aviokompanije", path: "/page5", icon: <CompareArrowsIcon /> },
+  { title: "Dodavanje nove recenzije za sedišta", path: "/page6", icon: <AddCommentIcon /> },
+  { title: "Dodavanje nove recenzije za salone na aerodromu", path: "/page7", icon: <AddCommentIcon /> }, 
 ];
 
 export default function Home() {
