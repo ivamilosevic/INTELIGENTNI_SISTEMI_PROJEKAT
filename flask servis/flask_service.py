@@ -18,7 +18,7 @@ def get_db_connection():
     )
 
 
-# ------------------ PRVA STRANICA ------------------
+# PRVA STRANICA 
 @app.route("/airline-overall-score")
 def airline_overall_score():
     conn = get_db_connection()
@@ -84,7 +84,7 @@ def aspect_description(dataset):
         cursor.close()
         conn.close()
 
-# ------------------ DRUGA STRANICA: preference-based ------------------
+# DRUGA STRANICA: preference-based
 @app.route("/best-airline-seat-by-preference", methods=["POST"])
 def best_airline_seat_by_preference():
     data = request.json
@@ -176,7 +176,7 @@ def best_airline_main_by_preference():
         cursor.close()
         conn.close()
 
-# ------------------ TREĆA STRANICA ------------------
+# TREĆA STRANICA 
 @app.route("/airline-cabin-score", methods=["POST"])
 def airline_cabin_score():
     data = request.json
@@ -238,7 +238,7 @@ def all_cabins():
         cursor.close()
         conn.close()
 
-# ------------------ ČETVRTA STRANICA ------------------
+# ČETVRTA STRANICA
 @app.route("/airports")
 def airports():
     conn = get_db_connection()
@@ -275,7 +275,7 @@ def airport(name):
         cursor.close()
         conn.close()
 
-# ------------------ PETA STRANICA ------------------
+# PETA STRANICA 
 @app.route("/compare-airlines", methods=["POST"])
 def compare_airlines():
     data = request.json
@@ -304,7 +304,7 @@ def compare_airlines():
         
         
         
-# ------------------ ŠESTA STRANICA ------------------       
+# ŠESTA STRANICA 
 sentiment_analyzer = pipeline(
     "sentiment-analysis",
     model="nlptown/bert-base-multilingual-uncased-sentiment",
@@ -312,7 +312,7 @@ sentiment_analyzer = pipeline(
 )
 
 def aspect_sentiment(text, aspects):
-    """Računa sentiment po aspektima iz teksta recenzije (1-10 skala)."""
+    
     results = {}
     for aspect in aspects:
         input_text = f"{aspect}: {text[:500]}"
@@ -322,13 +322,14 @@ def aspect_sentiment(text, aspects):
         results[aspect] = round(score_10, 2)
     return results
 
+
 @app.route("/add-seat-review", methods=["POST"])
 def add_seat_review():
     data = request.json
     required_fields = ["airline_name", "content"]
     
     if not all(f in data for f in required_fields):
-        return jsonify({"error": "Nedostaju obavezna polja"}), 400
+        return jsonify({"error": "Missing required fields"}), 400
 
     aspects_seat = ["seat_legroom", "seat_recline", "seat_width", "aisle_space", "viewing_tv"]
     
@@ -337,25 +338,39 @@ def add_seat_review():
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        # Provera da li red za ovu kompaniju već postoji
-        cursor.execute("SELECT * FROM seat_sentiment_summary WHERE airline_name = %s;", (data["airline_name"],))
-        existing = cursor.fetchall()
+        
+        insert_review_query = """
+            INSERT INTO seat_reviews (airline_name, content)
+            VALUES (%s, %s);
+        """
+        cursor.execute(insert_review_query, (data["airline_name"], data["content"]))
+        conn.commit()
 
+        
+        cursor.execute(
+            "SELECT COUNT(*) FROM seat_reviews WHERE airline_name = %s;",
+            (data["airline_name"],)
+        )
+        row = cursor.fetchone()
+        #print("DEBUG row:", row)
+        num_reviews = row['count'] if row else 0
+        #print(f"DEBUG: Number of reviews for {data['airline_name']}: {num_reviews}")
+
+        cursor.execute("""
+            SELECT seat_legroom, seat_recline, seat_width, aisle_space, viewing_tv
+            FROM seat_sentiment_summary
+             WHERE airline_name = %s;
+            """, (data["airline_name"],))
+        
+        existing = cursor.fetchone() 
         if existing:
-            # Ako postoji, računamo nove proseke po aspektima
             updated_scores = {}
-            count = len(existing) + 1
             for aspect in aspects_seat:
-                # proveravamo tip reda (tuple ili dict)
-                if isinstance(existing[0], dict):
-                    old_avg = sum(row[aspect] for row in existing) / len(existing)
-                else:
-                    idx = aspects_seat.index(aspect) + 1  # +1 jer row[0] = airline_name
-                    old_avg = sum(row[idx] for row in existing) / len(existing)
-                updated_scores[aspect] = round((old_avg * len(existing) + sentiment_scores[aspect]) / count, 2)
+                old_avg = float(existing[aspect] or 0) 
+                updated_scores[aspect] = round((old_avg * (num_reviews - 1) + float(sentiment_scores[aspect])) / num_reviews, 2)
+                #print(f"DEBUG: {aspect} -> old_avg: {old_avg}, new_score: {updated_scores[aspect]}")
 
 
-            # UPDATE tabele
             update_query = """
                 UPDATE seat_sentiment_summary
                 SET seat_legroom=%s, seat_recline=%s, seat_width=%s, aisle_space=%s, viewing_tv=%s
@@ -373,7 +388,6 @@ def add_seat_review():
             message = "Seat review added and averages updated"
             result_scores = updated_scores
         else:
-            # Ako ne postoji, INSERT novi red
             insert_query = """
                 INSERT INTO seat_sentiment_summary
                 (airline_name, seat_legroom, seat_recline, seat_width, aisle_space, viewing_tv)
@@ -393,7 +407,8 @@ def add_seat_review():
 
         return jsonify({
             "message": message,
-            "scores": result_scores
+            "scores": result_scores,
+            "total_reviews": num_reviews
         })
 
     except Exception as e:
@@ -406,14 +421,15 @@ def add_seat_review():
         cursor.close()
         conn.close()
 
-# ------------------ SEDMA STRANICA ------------------  
+
+# SEDMA STRANICA
 @app.route("/add-lounge-review", methods=["POST"])
 def add_lounge_review():
     data = request.json
     required_fields = ["airline_name", "content"]
     
     if not all(f in data for f in required_fields):
-        return jsonify({"error": "Nedostaju obavezna polja"}), 400
+        return jsonify({"error": "Missing required fields"}), 400
 
     aspects_lounge = ["cleanliness","bar_beverages","catering","washrooms","wifi_connectivity","staff_service"]
     
@@ -422,25 +438,39 @@ def add_lounge_review():
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        # Provera da li red za ovu kompaniju već postoji
-        cursor.execute("SELECT * FROM lounge_sentiment_summary WHERE airline_name = %s;", (data["airline_name"],))
-        existing = cursor.fetchall()
+        
+        insert_review_query = """
+            INSERT INTO lounge_reviews (airline_name, content)
+            VALUES (%s, %s);
+        """
+        cursor.execute(insert_review_query, (data["airline_name"], data["content"]))
+        conn.commit()
 
+       
+        cursor.execute(
+            "SELECT COUNT(*) FROM lounge_reviews WHERE airline_name = %s;",
+            (data["airline_name"],)
+        )
+        row = cursor.fetchone()
+        #print("DEBUG row:", row)
+        num_reviews = row['count'] if row else 0
+        #print(f"DEBUG: Number of reviews for {data['airline_name']}: {num_reviews}")
+
+        cursor.execute("""
+            SELECT cleanliness, bar_beverages, catering, washrooms, wifi_connectivity, staff_service
+            FROM lounge_sentiment_summary
+             WHERE airline_name = %s;
+            """, (data["airline_name"],))
+        
+        existing = cursor.fetchone()  
         if existing:
-            # Ako postoji, računamo nove proseke po aspektima
             updated_scores = {}
-            count = len(existing) + 1
             for aspect in aspects_lounge:
-                # proveravamo tip reda (tuple ili dict)
-                if isinstance(existing[0], dict):
-                    old_avg = sum(row[aspect] for row in existing) / len(existing)
-                else:
-                    idx = aspects_lounge.index(aspect) + 1  # +1 jer row[0] = airline_name
-                    old_avg = sum(row[idx] for row in existing) / len(existing)
-                updated_scores[aspect] = round((old_avg * len(existing) + sentiment_scores[aspect]) / count, 2)
+                old_avg = float(existing[aspect] or 0)  
+                updated_scores[aspect] = round((old_avg * (num_reviews - 1) + float(sentiment_scores[aspect])) / num_reviews, 2)
+                #print(f"DEBUG: {aspect} -> old_avg: {old_avg}, new_score: {updated_scores[aspect]}")
 
 
-            # UPDATE tabele
             update_query = """
                 UPDATE lounge_sentiment_summary
                 SET cleanliness=%s, bar_beverages=%s, catering=%s, washrooms=%s, wifi_connectivity=%s, staff_service=%s 
@@ -459,7 +489,6 @@ def add_lounge_review():
             message = "Lounge review added and averages updated"
             result_scores = updated_scores
         else:
-            # Ako ne postoji, INSERT novi red
             insert_query = """
                 INSERT INTO lounge_sentiment_summary
                 (airline_name, cleanliness, bar_beverages, catering, washrooms, wifi_connectivity, staff_service)
@@ -480,7 +509,8 @@ def add_lounge_review():
 
         return jsonify({
             "message": message,
-            "scores": result_scores
+            "scores": result_scores,
+            "total_reviews": num_reviews
         })
 
     except Exception as e:

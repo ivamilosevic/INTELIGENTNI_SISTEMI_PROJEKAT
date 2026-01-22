@@ -21,7 +21,6 @@ export default function Page6() {
 
   const navigate = useNavigate();
 
-  // fetch liste aviokompanija
   useEffect(() => {
     fetch("http://localhost:5000/all-airlines")
       .then(res => res.json())
@@ -86,7 +85,7 @@ export default function Page6() {
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          {/* --- Dropdown aviokompanije --- */}
+          {/* Dropdown aviokompanije */}
           <FormControl fullWidth required>
             <InputLabel sx={{ color: "rgba(255,255,255,0.6)" }}>Aviokompanija</InputLabel>
             <Select
@@ -109,7 +108,7 @@ export default function Page6() {
             </Select>
           </FormControl>
 
-          {/* --- Tekst recenzije --- */}
+          {/* Tekst recenzije */}
           <TextField
             label="Recenzija"
             multiline
@@ -120,13 +119,13 @@ export default function Page6() {
             fullWidth
            InputLabelProps={{
                 sx: {
-                color: "#fff",              // label bela
-                "&.Mui-focused": { color: "#fff" } // label ostaje bela kada je fokus
+                color: "#fff",             
+                "&.Mui-focused": { color: "#fff" } 
                 }
             }}
             InputProps={{
                 sx: {
-                color: "#fff",                 // tekst koji korisnik upisuje
+                color: "#fff",                 
                 backgroundColor: "#1a1a1a",
                 ".MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.4)" },
                 "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#fff" }
@@ -143,7 +142,11 @@ export default function Page6() {
               border: "2px solid white",
               color: "white",
               borderRadius: 2,
-              "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" }
+              "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+              "&.Mui-disabled": {       
+                color: "white",
+                borderColor: "rgba(255,255,255,0.5)"   
+              }
             }}
             disabled={loading}
           >

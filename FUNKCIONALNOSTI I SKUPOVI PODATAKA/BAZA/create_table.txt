@@ -73,10 +73,28 @@ CREATE TABLE airline_cabin_sentiment_summary (
     overall_sentiment TEXT
 );
 
---------------------------------------------TABELE VEZANE ZA PETU STRANICU------------------------------
+--------------------------------------------TABELE VEZANE ZA ČETVRTU STRANICU------------------------------
 
 CREATE TABLE airport_sentiment_summary_serbian (
     id SERIAL PRIMARY KEY,
     airport_name TEXT UNIQUE,
     summary_sentence TEXT
+);
+
+--------------------------------------------TABELE VEZANE ZA ŠESTU STRANICU------------------------------
+
+
+CREATE TABLE seat_reviews (
+    id SERIAL PRIMARY KEY,
+    airline_name TEXT NOT NULL,
+    content TEXT NOT NULL
+);
+
+--------------------------------------------TABELE VEZANE ZA SEDMU STRANICU------------------------------
+
+
+CREATE TABLE lounge_reviews (
+    id SERIAL PRIMARY KEY,
+    airline_name TEXT NOT NULL,
+    content TEXT NOT NULL
 );
