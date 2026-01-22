@@ -29,7 +29,7 @@ git clone https://github.com/ivamilosevic/INTELIGENTNI_SISTEMI_PROJEKAT.git
 
 2. Set up and populate the database
    
-   2.1 Navigate to the FUNKCIONALNOSTI I SKUPOVI PODATAKA/BAZA folder
+   2.1 Navigate to the `FUNKCIONALNOSTI I SKUPOVI PODATAKA/BAZA` folder
    
    ```bash
     cd "FUNKCIONALNOSTI I SKUPOVI PODATAKA/BAZA"
@@ -49,7 +49,7 @@ git clone https://github.com/ivamilosevic/INTELIGENTNI_SISTEMI_PROJEKAT.git
     
     2.4 Populate the database
    
-   - Run the Jupyter notebooks in FUNKCIONALNOSTI I SKUPOVI PODATAKA to populate the database and initialize the core AI functionalities.
+   - Run the Jupyter notebooks in `FUNKCIONALNOSTI I SKUPOVI PODATAKA` to populate the database and initialize the core AI functionalities.
    - The notebooks perform preprocessing and data insertion.
    - This step allows exploration and extension of the system’s AI features.
 
