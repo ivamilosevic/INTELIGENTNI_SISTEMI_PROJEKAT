@@ -1,16 +1,67 @@
-# React + Vite
+# ✈️ JET – Journey Enrichment Tool: Avio AI Agent
+## 🚀 Features
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- Top Airlines and Aspect Importance
+- Airline Selection by Preferences
+- Airline and Seat Type Ratings
+- Airport Overview
+- Airline Comparison
+- New Seat Review Submission
+- New Airport Lounge Review Submission
 
-Currently, two official plugins are available:
+## 🧑‍💻 Team Members
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Iva Milošević, 2011
+- Anastasija Trajković, 2037
 
-## React Compiler
+## 📦 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Frontend: React
+- Backend & AI Service: Flask (handles both API/database calls and AI/LLM)
+- Database: PostgreSQL
 
-## Expanding the ESLint configuration
+## 🤖 How to Run
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Clone the repository
+```bash
+git clone https://github.com/ivamilosevic/INTELIGENTNI_SISTEMI_PROJEKAT.git
+```
+
+2. Set up and populate the database
+   
+   2.1 Navigate to the FUNKCIONALNOSTI I SKUPOVI PODATAKA/BAZA folder
+   
+   ```bash
+    cd "FUNKCIONALNOSTI I SKUPOVI PODATAKA/BAZA"
+   ```
+   
+   2.2 Create the database
+   
+    ```bash
+    createdb airline_recommendations_db
+    ```
+    
+   2.3 Follow the instructions in the txt file to create the necessary tables
+   
+    ```bash
+    psql -U username -d airline_recommendations_db -f "FUNKCIONALNOSTI I SKUPOVI PODATAKA/Baza/create table.txt"
+    ```
+    
+    2.4 Populate the database
+   
+   - Run the Jupyter notebooks in FUNKCIONALNOSTI I SKUPOVI PODATAKA to populate the database and initialize the core AI functionalities.
+   - The notebooks perform preprocessing and data insertion.
+   - This step allows exploration and extension of the system’s AI features.
+
+3. Start the frontend
+```bash
+npm run dev
+```
+
+4. Start the backend
+```bash
+cd "flask servis"
+python flask_service.py
+```
+
+The frontend and backend are now running correctly. The project should be accessible through a web browser.
